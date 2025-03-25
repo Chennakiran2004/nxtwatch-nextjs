@@ -90,7 +90,7 @@ const Login: React.FC = () => {
         new Error("Login failed");
       }
 
-      const data = await response.json();
+      const data = await response.text();
       console.log(data);
       if (data.token) {
         Cookies.set("token", data.token, { expires: 30 }); // Set to 30 days

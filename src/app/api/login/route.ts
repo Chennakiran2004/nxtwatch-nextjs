@@ -71,7 +71,7 @@ export async function POST(req: Request): Promise<Response> {
   try {
     const { username, password }: User = await req.json();
     const client = await clientPromise;
-    const db: Db = client.db("nxtwatch");
+    const db: Db = client.db("NxtWatch");
     const usersCollection: Collection<User> = db.collection("User");
 
     // Check if user exists
