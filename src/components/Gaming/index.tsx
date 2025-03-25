@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState, useContext } from "react";
-import { ThreeDots } from "react-loader-spinner";
+// import { ThreeDots } from "react-loader-spinner";
 import { IoLogoGameControllerB } from "react-icons/io";
 import ThemeContext from "../../Context/ThemeContext";
 import GamingBody from "../GamingBody";
@@ -130,11 +130,12 @@ const Gaming: React.FC = () => {
       case "loading":
         return (
           <LoaderContainer data-testid="loader">
-            <ThreeDots
+            {/* <ThreeDots
               color={isDarkTheme ? "#ffffff" : "#000000"}
               height={50}
               width={50}
-            />
+            /> */}
+            Loading...
           </LoaderContainer>
         );
 

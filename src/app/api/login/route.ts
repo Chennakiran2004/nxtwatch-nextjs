@@ -1,99 +1,104 @@
-export async function POST(request: Request) {
-  try {
-    const body = await request.json();
-    const { username, password } = body;
-
-    const response = await fetch("https://apis.ccbp.in/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ username, password }),
-    });
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      return new Response(JSON.stringify({ error: "Login failed" }), {
-        status: response.status,
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-    }
-
-    return new Response(JSON.stringify(data), {
-      status: 200,
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  } catch (error) {
-    return new Response(JSON.stringify({ error: "Internal server error" }), {
-      status: 500,
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-  }
-}
-
-// app/api/login/route.ts
 // import { NextResponse } from "next/server";
-// import { connectToDatabase } from "../../../../lib/mongodb";
+// import clientPromise from "../../../../lib/mongodb";
 // import bcrypt from "bcryptjs";
 // import jwt from "jsonwebtoken";
 
-// const SECRET_KEY = process.env.JWT_SECRET || "mySecretKey";
+// const SECRET_KEY = process.env.JWT_SECRET as string; // Ensure it's set in .env.local
+// console.log("JWT Secret:", process.env.JWT_SECRET);
 
-// export async function POST(request: Request) {
+// export async function POST(req: Request) {
 //   try {
-//     console.log("Connecting to DB...");
-//     const { username, password } = await request.json();
-//     console.log("Received username input:", username);
+//     const { username, password } = await req.json();
 
-//     const db = await connectToDatabase();
-//     const usersCollection = db.collection("User");
-
-//     // Log all users in the collection
-//     const allUsers = await usersCollection.find().toArray();
-//     console.log("Users in DB:", allUsers);
-
-//     // 🔹 Log the query and use case-insensitive search
-//     const searchQuery = {
-//       username: { $regex: `^${username}$`, $options: "i" },
-//     };
-//     console.log("Searching with query:", searchQuery);
-
-//     const user = await usersCollection.findOne(searchQuery);
-//     console.log("Found user:", user);
-
-//     if (!user) {
-//       return NextResponse.json({ error: "User not found" }, { status: 401 });
+//     if (!username || !password) {
+//       return NextResponse.json(
+//         { message: "Missing credentials" },
+//         { status: 400 }
+//       );
 //     }
 
-//     const isPasswordCorrect = await bcrypt.compare(password, user.password);
-//     console.log("Password comparison result:", isPasswordCorrect);
+//     const client = await clientPromise;
+//     const db = client.db("NxtWatch");
+//     const usersCollection = db.collection("User");
 
-//     if (!isPasswordCorrect) {
+//     // Find user in DB
+//     const user = await usersCollection.findOne({ username });
+
+//     if (!user) {
+//       return NextResponse.json({ message: "User not found" }, { status: 404 });
+//     }
+
+//     // Compare password with hashed version
+//     const isPasswordValid = await bcrypt.compare(password, user.password);
+//     if (!isPasswordValid) {
 //       return NextResponse.json(
-//         { error: "Invalid credentials" },
+//         { message: "Invalid username or password" },
 //         { status: 401 }
 //       );
 //     }
 
-//     const token = jwt.sign({ userId: user._id }, SECRET_KEY, {
-//       expiresIn: "30d",
+//     // Generate JWT token
+//     const token = jwt.sign({ username: user.username }, SECRET_KEY, {
+//       expiresIn: "1h",
 //     });
-//     console.log("Generated token:", token);
 
-//     return NextResponse.json({ jwt_token: token }, { status: 200 });
-//   } catch (error) {
-//     console.error("Login error:", error);
 //     return NextResponse.json(
-//       { error: "Internal server error" },
+//       { message: "Login successful", token },
+//       { status: 200 }
+//     );
+//     // eslint-disable-next-line @typescript-eslint/no-unused-vars
+//   } catch (error) {
+//     return NextResponse.json(
+//       { message: "Internal server error" },
 //       { status: 500 }
 //     );
 //   }
 // }
+
+import clientPromise from "../../../../lib/mongodb";
+import jwt from "jsonwebtoken";
+import { NextResponse } from "next/server";
+import { Db, Collection } from "mongodb";
+
+const SECRET_KEY = process.env.JWT_SECRET as string; // Ensure this is set in .env.local
+
+interface User {
+  username: string;
+  password: string;
+}
+
+export async function POST(req: Request): Promise<Response> {
+  try {
+    const { username, password }: User = await req.json();
+    const client = await clientPromise;
+    const db: Db = client.db("nxtwatch");
+    const usersCollection: Collection<User> = db.collection("User");
+
+    // Check if user exists
+    let user = await usersCollection.findOne({ username });
+
+    if (!user) {
+      // Create a new user
+      await usersCollection.insertOne({ username, password });
+      user = await usersCollection.findOne({ username }); // Fetch newly created user
+    } else if (user.password !== password) {
+      return NextResponse.json(
+        { message: "Invalid username or password" },
+        { status: 401 }
+      );
+    }
+
+    // Generate JWT token
+    const token = jwt.sign({ username }, SECRET_KEY, { expiresIn: "1h" });
+
+    return NextResponse.json(
+      { message: "Login successful", token },
+      { status: 200 }
+    );
+  } catch (error) {
+    return NextResponse.json(
+      { message: "Internal server error", error: (error as Error).message },
+      { status: 500 }
+    );
+  }
+}

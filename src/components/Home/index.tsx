@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { ThreeDots } from "react-loader-spinner";
+// import { ThreeDots } from "react-loader-spinner";
 import { IoMdClose } from "react-icons/io";
 import { BsSearch } from "react-icons/bs";
 import { useTheme } from "@/context/ThemeContext";
@@ -144,15 +144,7 @@ const Home = () => {
 
   const renderContent = () => {
     if (isLoading) {
-      return (
-        <LoaderContainer>
-          <ThreeDots
-            color={isDarkTheme ? "#ffffff" : "#000000"}
-            height="50"
-            width="50"
-          />
-        </LoaderContainer>
-      );
+      return <LoaderContainer>Loading...</LoaderContainer>;
     }
 
     if (error) {

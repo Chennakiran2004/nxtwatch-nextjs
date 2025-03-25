@@ -6,7 +6,7 @@ import { formatDistanceToNow } from "date-fns";
 import { BiLike, BiDislike } from "react-icons/bi";
 import { RiMenuAddLine } from "react-icons/ri";
 import ReactPlayer from "react-player";
-import { ThreeDots } from "react-loader-spinner";
+// import { ThreeDots } from "react-loader-spinner";
 import { useTheme } from "../../context/ThemeContext";
 import { useSavedVideos } from "../../context/SavedVideosContext";
 import { getCookie, getAuthHeaders } from "../../utils/auth";
@@ -130,11 +130,7 @@ const VideoItemDetails = () => {
   if (isLoading) {
     return (
       <LoaderContainer className="loader-container" data-testid="loader">
-        <ThreeDots
-          color={isDarkTheme ? "#ffffff" : "#000000"}
-          height="50"
-          width="50"
-        />
+        Loading...
       </LoaderContainer>
     );
   }

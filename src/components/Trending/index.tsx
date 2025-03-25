@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState, useContext } from "react";
 import { AiFillFire } from "react-icons/ai";
-import { ThreeDots } from "react-loader-spinner";
+// import { ThreeDots } from "react-loader-spinner";
 import ThemeContext from "../../Context/ThemeContext";
 import TrendingVideoCard from "../TrendingVideoCard";
 import Layout from "../Layout";
@@ -151,11 +151,12 @@ const Trending: React.FC = () => {
       case "loading":
         return (
           <LoaderContainer data-testid="loader">
-            <ThreeDots
+            {/* <ThreeDots
               color={isDarkTheme ? "#ffffff" : "#000000"}
               height={50}
               width={50}
-            />
+            /> */}
+            Loading...
           </LoaderContainer>
         );
 
