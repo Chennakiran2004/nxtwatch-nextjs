@@ -83,7 +83,9 @@ const Home = () => {
         return;
       }
 
-      const url = `https://apis.ccbp.in/videos/all?search=${search}`;
+      // const url = `https://apis.ccbp.in/videos/all?search=${search}`;
+      const url = `/api/home?search=${search}`;
+
       console.log("Fetching from URL:", url);
 
       const headers = getAuthHeaders(jwtToken);

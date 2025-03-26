@@ -80,7 +80,6 @@ const Login: React.FC = () => {
     try {
       const response = await fetch("/api/login", {
         method: "POST",
-
         body: JSON.stringify({ username, password }),
       });
 
@@ -93,7 +92,8 @@ const Login: React.FC = () => {
       const data = await response.json();
       console.log(data);
       if (data.token) {
-        Cookies.set("token", data.token, { expires: 30 }); // Set to 30 days
+        console.log("Token came", data.token);
+        Cookies.set("jwt_token", data.token, { expires: 30, path: "/" }); // Set to 30 days
         router.push("/"); // Updated route path
       } else {
         throw new Error("No token received");

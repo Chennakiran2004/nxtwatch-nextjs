@@ -76,7 +76,8 @@ const Trending: React.FC = () => {
     }
 
     try {
-      const url = "https://apis.ccbp.in/videos/trending";
+      // const url = "https://apis.ccbp.in/videos/trending";
+      const url = `/api/trending`;
       const response = await fetch(url, {
         headers: getAuthHeaders(jwtToken), // Pass JWT token in headers
         method: "GET",
@@ -93,13 +94,15 @@ const Trending: React.FC = () => {
       }
 
       const data = await response.json();
+      console.log("API Response:", data);
       const formattedData: VideoDetails[] = (
         data.videos as VideoAPIResponse[]
       ).map((eachItem) => ({
         id: eachItem.id,
         thumbnailUrl: eachItem.thumbnail_url,
         title: eachItem.title,
-        viewCount: eachItem.view_count.toString(),
+        // viewCount: eachItem.view_count.toString(),
+        viewCount: String(eachItem.view_count || 0),
         publishedAt: eachItem.published_at,
         channel: {
           name: eachItem.channel.name,

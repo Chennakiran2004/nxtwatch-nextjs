@@ -66,7 +66,8 @@ const Gaming: React.FC = () => {
     }
 
     try {
-      const url = "https://apis.ccbp.in/videos/gaming";
+      // const url = "https://apis.ccbp.in/videos/gaming";
+      const url = `/api/gaming`;
       const response = await fetch(url, {
         headers: getAuthHeaders(jwtToken),
         method: "GET",
@@ -77,13 +78,14 @@ const Gaming: React.FC = () => {
       }
 
       const data = await response.json();
+      console.log("gaming", data);
       const formattedData: VideoDetails[] = (
         data.videos as VideoAPIResponse[]
       ).map((eachItem) => ({
         id: eachItem.id,
         thumbnailUrl: eachItem.thumbnail_url,
         title: eachItem.title,
-        viewCount: eachItem.view_count.toString(), // Convert number to string
+        viewCount: String(eachItem.view_count || 0), // Convert number to string
       }));
 
       setVideosList(formattedData);

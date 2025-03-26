@@ -4,7 +4,7 @@ import { MongoClient } from "mongodb";
 //   "mongodb+srv://kirankumarchenna2004:kiran2004@cluster.25vj9.mongodb.net/NxtWatch?retryWrites=true&w=majority";
 
 const MONGO_URI =
-  "mongodb+srv://kirankumarchenna2004:<db_password>@cluster0.0t0lt.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0&authSource=admin";
+  "mongodb+srv://kirankumarchenna2004:ckk1234@cluster0.0t0lt.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0&authSource=admin";
 
 const DB_NAME = "NxtWatch";
 
